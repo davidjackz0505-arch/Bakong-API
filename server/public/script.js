@@ -11,20 +11,15 @@ async function generateKHQR() {
   currentAmount = amount;
 
   try {
-    const res = await fetch("https://bakong-api.onrender.com/generate-khqr", {
+    // UPDATED: Removed localhost, using relative path
+    const res = await fetch("/generate-khqr", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ amount }),
     });
 
     const data = await res.json();
-
     currentKHQR = data.khqrString;
-
-    // Show modal if already paid
-    if (data.alreadyPaid) {
-      showModal("Payment for this amount is already completed ✅");
-    }
 
     // Draw QR code
     const canvas = document.getElementById("qrCanvas");
@@ -36,6 +31,19 @@ async function generateKHQR() {
       ctx.drawImage(img, 0, 0);
     };
     img.src = data.qrImage;
+
+    // Show MD5 and verification
+    document.getElementById("md5").innerText = data.md5;
+    document.getElementById("verify").innerText = data.isValid
+      ? "Valid ✅"
+      : "Invalid ❌";
+
+    // Show modal alert
+    if (data.alreadyPaid) {
+      showModal("Payment has already been completed ✅");
+    } else if (data.isValid) {
+      showModal("KHQR verification success ✅");
+    }
   } catch (err) {
     console.error(err);
     alert("Failed to generate KHQR");
@@ -48,23 +56,27 @@ async function pay() {
     return;
   }
 
-  // Mark payment completed in backend (simulate)
-  await fetch("https://bakong-api.onrender.com/complete-payment", {
+  // UPDATED: Removed localhost, using relative path
+  await fetch("/complete-payment", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ amount: currentAmount }),
   });
 
-  // Redirect to ACLEDA with KHQR string
-  const bankLink = `${baseUrl}&payment_data=${encodeURIComponent(currentKHQR)}`;
-  window.location.href = bankLink;
+  // Show success modal before redirect
+  showModal("Payment marked as completed ✅ Redirecting to ACLEDA App...");
+
+  setTimeout(() => {
+    const bankLink = `${baseUrl}&payment_data=${encodeURIComponent(
+      currentKHQR
+    )}`;
+    window.location.href = bankLink;
+  }, 2000); // 2 seconds delay for modal
 }
 
 function showModal(msg) {
+  const modal = document.getElementById("modal");
   document.getElementById("modalText").innerText = msg;
-  document.getElementById("modal").style.display = "block";
-}
-
-function closeModal() {
-  document.getElementById("modal").style.display = "none";
+  modal.style.display = "block";
+  setTimeout(() => (modal.style.display = "none"), 3000); // auto-hide after 3 sec
 }
