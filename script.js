@@ -11,7 +11,7 @@ async function generateKHQR() {
   currentAmount = amount;
 
   try {
-    const res = await fetch("http://localhost:3000/generate-khqr", {
+    const res = await fetch("https://bakong-api.onrender.com/generate-khqr", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ amount }),
@@ -49,7 +49,7 @@ async function pay() {
   }
 
   // Mark payment completed in backend (simulate)
-  await fetch("http://localhost:3000/complete-payment", {
+  await fetch("https://bakong-api.onrender.com/complete-payment", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ amount: currentAmount }),
