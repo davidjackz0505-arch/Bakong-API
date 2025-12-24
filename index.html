@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>KHQR Sandbox to ACLEDA</title>
+<style>
+body { font-family: Arial; max-width: 500px; margin: 40px auto; text-align: center; }
+input, button { width: 100%; padding: 10px; margin-top: 10px; }
+canvas { margin-top: 20px; border: 1px solid #ccc; }
+.modal {
+  display: none;
+  position: fixed; z-index: 1000;
+  left: 0; top: 0; width: 100%; height: 100%;
+  background-color: rgba(0,0,0,0.5);
+}
+.modal-content {
+  background: #fff; padding: 20px;
+  margin: 20% auto; width: 80%; max-width: 400px;
+  border-radius: 8px; text-align: center;
+}
+button.close { margin-top: 20px; padding: 8px 20px; }
+</style>
+</head>
+<body>
+
+<h2>KHQR Payment</h2>
+<input type="number" id="amount" placeholder="Enter amount (KHR)">
+<button onclick="generateKHQR()">Generate KHQR</button>
+
+<canvas id="qrCanvas"></canvas>
+
+<button id="payBtn" onclick="pay()" style="margin-top:20px;">Go to ACLEDA App</button>
+
+<div id="modal" class="modal">
+  <div class="modal-content">
+    <p id="modalText"></p>
+    <button class="close" onclick="closeModal()">OK</button>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
